@@ -25,10 +25,10 @@ public class Appointment {
 	private String appointmentId;
 	
 	@Column(nullable = false)
-	private double patientId;
+	private String patientId;
 	
 	@Column(nullable = false)
-	private double doctorId;
+	private String doctorId;
 	
 	@Column(nullable = false)
 	private LocalDate appointmentDate;

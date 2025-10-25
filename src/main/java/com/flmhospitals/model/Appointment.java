@@ -10,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,6 +18,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Table(name = "appointments")
 public class Appointment {
 
@@ -25,10 +27,10 @@ public class Appointment {
 	private String appointmentId;
 	
 	@Column(nullable = false)
-	private String patientId;
+	private Long patientId;
 	
 	@Column(nullable = false)
-	private String doctorId;
+	private Long doctorId;
 	
 	@Column(nullable = false)
 	private LocalDate appointmentDate;

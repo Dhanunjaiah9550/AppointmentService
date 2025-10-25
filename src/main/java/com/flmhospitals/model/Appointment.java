@@ -26,25 +26,18 @@ public class Appointment {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private String appointmentId;
 	
-	@Column(nullable = false)
 	private Long patientId;
 	
-	@Column(nullable = false)
 	private Long doctorId;
 	
-	@Column(nullable = false)
 	private LocalDate appointmentDate;
 	
-	@Column(nullable = false)
 	private LocalDateTime startTime;
 	
-	@Column(nullable = false)
 	private LocalDateTime endTime;
 	
-	@Column(nullable = false)
 	private String status;
 	
-	@Column(nullable = true)
 	private String notes;
 }
 

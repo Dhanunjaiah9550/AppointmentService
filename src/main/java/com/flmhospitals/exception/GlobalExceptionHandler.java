@@ -15,6 +15,6 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(AppointmentAlreadyExistsException.class)
 	public ResponseEntity<String> handleAppointmentAlreadyExistsException(AppointmentAlreadyExistsException ex) {
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+		return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
 	}
 }

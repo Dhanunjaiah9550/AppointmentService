@@ -3,12 +3,14 @@ package com.flmhospitals.model;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import org.hibernate.annotations.GenericGenerator;
+import com.flmhospitals.Generator.AppointmentIdGenerator;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
+
 import jakarta.persistence.Id;
+
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,9 +24,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "appointments")
 public class Appointment {
 	@Id
-    @GeneratedValue(generator = "appointment-id-generator")
-    @GenericGenerator(name = "appointment-id-generator", strategy = "com.yourpackage.generator.AppointmentIdGenerator")
-    private String appointmentId;
+       private String appointmentId;
 
     private Long patientId;
     private Long doctorId;
@@ -33,6 +33,16 @@ public class Appointment {
     private LocalDateTime endTime;
     private String status;
     private String notes;
+    
+    @Transient
+    private AppointmentIdGenerator appointmentIdGenerator;
+
+   
+    public void generateAppointmentId() {
+        if (this.appointmentId == null || this.appointmentId.isEmpty()) {
+            this.appointmentId = appointmentIdGenerator.generateNextAppointmentId();
+        }
+    }
 
 	
 }

@@ -1,7 +1,7 @@
 package com.flmhospitals.model;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -28,9 +28,9 @@ public class Appointment {
 	
 	private LocalDate appointmentDate;
 	
-	private LocalDateTime startTime;
+	private LocalTime startTime;
 	
-	private LocalDateTime endTime;
+	private LocalTime endTime;
 	
 	private String status;
 	

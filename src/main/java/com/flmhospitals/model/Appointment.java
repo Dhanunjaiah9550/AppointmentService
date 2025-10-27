@@ -38,7 +38,7 @@ public class Appointment {
     private AppointmentIdGenerator appointmentIdGenerator;
 
    
-    public void generateAppointmentId() {
+    public void generateAppointmentId() { 
         if (this.appointmentId == null || this.appointmentId.isEmpty()) {
             this.appointmentId = appointmentIdGenerator.generateNextAppointmentId();
         }

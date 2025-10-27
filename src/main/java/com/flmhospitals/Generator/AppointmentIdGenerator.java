@@ -1,20 +1,35 @@
 package com.flmhospitals.Generator;
 
-import org.hibernate.engine.spi.SharedSessionContractImplementor;
-import org.hibernate.id.IdentifierGenerator;
 
-import java.io.Serializable;
+
+import com.flmhospitals.dao.AppointmentRepository;
+
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Random;
 
-public class AppointmentIdGenerator implements IdentifierGenerator {
 
-    @Override
-    public Serializable generate(SharedSessionContractImplementor session, Object object) {
-        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-        int randomDigits = new Random().nextInt(90000) + 10000;
-        return timestamp + randomDigits;
+public class AppointmentIdGenerator {
+
+	private final AppointmentRepository appointmentRepository;
+
+    public AppointmentIdGenerator(AppointmentRepository appointmentRepository) {
+        this.appointmentRepository = appointmentRepository;
+    }
+
+    public String generateNextAppointmentId() {
+        String prefix = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        String lastId = appointmentRepository.findLastAppointmentId();
+
+        int nextNumber = 1;
+
+        if (lastId != null && lastId.length() > 14) {
+            String numberPart = lastId.substring(14); 
+            nextNumber = Integer.parseInt(numberPart) + 1;
+        }
+
+        String suffix = String.format("%05d", nextNumber); 
+        return prefix + suffix;
     }
 }
 

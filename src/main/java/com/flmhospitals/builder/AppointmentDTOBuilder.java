@@ -6,7 +6,7 @@ import com.flmhospitals.model.Appointment;
 
 public class AppointmentDTOBuilder {
 
-	 public static AppointmentResponseDTO buildAppointmentResponseDTO(Appointment appointment, String patientName, String doctorName) {
+	 public static AppointmentResponseDTO buildAppointmentResponseDTO(Appointment appointment) {
 	        return AppointmentResponseDTO.builder()
 	                .appointmentId(appointment.getAppointmentId())
 	                .appointmentDate(appointment.getAppointmentDate())

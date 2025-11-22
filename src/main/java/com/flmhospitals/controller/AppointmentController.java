@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.flmhospitals.service.AppointmentService;
 
@@ -19,8 +20,8 @@ public class AppointmentController {
 		this.appointmentSerivce = appointmentService;
 	}
 
-	@GetMapping("/getDoctorPatients/{staffId}/{startDate}/{endDate}")
-	public List<String> getPatientsVisitedByDoctor(@PathVariable(name="staffId") String staffId, @PathVariable("startDate") String startdate,@PathVariable("endDate") String enddate){
+	@GetMapping("/getDoctorPatients/{staffId}")
+	public List<String> getPatientsVisitedByDoctor(@PathVariable(name="staffId") String staffId, @RequestParam("startDate") String startdate,@RequestParam("endDate") String enddate){
 		
 		LocalDate startDate = LocalDate.parse(startdate);
 		

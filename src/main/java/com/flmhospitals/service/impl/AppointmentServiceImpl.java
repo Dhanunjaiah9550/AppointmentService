@@ -21,8 +21,6 @@ public class AppointmentServiceImpl implements AppointmentService{
 		
 		 List<String> patientsByStaffId = appointementRepository.findPatientsByStaffId(staffId, startDate, endDate);
 		 
-		 System.out.println(patientsByStaffId);
-		 
 		 return patientsByStaffId;
 	}
 

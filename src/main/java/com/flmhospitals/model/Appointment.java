@@ -1,7 +1,7 @@
 package com.flmhospitals.model;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import com.flmhospitals.Generator.AppointmentIdGenerator;
 
@@ -23,15 +23,21 @@ import lombok.NoArgsConstructor;
 @Builder
 @Table(name = "appointments")
 public class Appointment {
-	@Id
-       private String appointmentId;
+	  @Id
+    private String appointmentId;
 
     private Long patientId;
+  
     private Long doctorId;
+  
     private LocalDate appointmentDate;
+  
     private LocalDateTime startTime;
+  
     private LocalDateTime endTime;
+  
     private String status;
+  
     private String notes;
     
     @Transient

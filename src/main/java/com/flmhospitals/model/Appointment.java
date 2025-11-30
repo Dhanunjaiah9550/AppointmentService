@@ -6,7 +6,6 @@ import com.flmhospitals.Generator.AppointmentIdGenerator;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,10 +13,11 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @Table(name = "appointments")
+@EntityListeners(value = AppointmentEntityListner.class)
 public class Appointment {
 
 	@Id
@@ -36,17 +36,6 @@ public class Appointment {
 	private String status;
 
 	private String notes;
-
-	@Transient
-	private AppointmentIdGenerator appointmentIdGenerator;
-
-	public void generateAppointmentId() {
-		if (this.appointmentId == null || this.appointmentId.isEmpty()) {
-			this.appointmentId = appointmentIdGenerator.generateNextAppointmentId();
-		}
-		
-		
-	}
 
 	public Appointment(Long patientId, Long doctorId, LocalDate appointmentDate, LocalTime startTime, LocalTime endTime,
 			String status, String notes, AppointmentIdGenerator appointmentIdGenerator) {

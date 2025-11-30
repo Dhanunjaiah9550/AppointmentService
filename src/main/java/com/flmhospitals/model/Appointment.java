@@ -21,6 +21,7 @@ import lombok.NoArgsConstructor;
 public class Appointment {
 
 	@Id
+	@Column(name = "appointment_id", nullable = false, unique = true)
 	private String appointmentId;
 
 	private Long patientId;

@@ -47,14 +47,10 @@ public class AppointmentServiceImpl implements AppointmentService {
 		String date = appointmentDate.toString();
 
 		Boolean doctorAvailablity = doctorClient.isDoctorAvailable(appointmentRequestDto.getDoctorId(), date);
-		
-		System.out.println(doctorAvailablity);
 
 		List<Appointment> doctorAppointments = appointementRepository.findByDoctorId(
 				appointmentRequestDto.getDoctorId(), appointmentRequestDto.getAppointmentDate(),
 				appointmentRequestDto.getStartTime(), appointmentRequestDto.getEndTime());
-		
-		System.out.println(doctorAppointments);
 
 		List<Appointment> patientAppointments = appointementRepository.findByPatientId(
 				appointmentRequestDto.getPatientId(), appointmentRequestDto.getAppointmentDate(),

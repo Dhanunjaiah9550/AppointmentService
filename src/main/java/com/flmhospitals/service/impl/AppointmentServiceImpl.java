@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import com.flmhospitals.builder.AppointmentBuilder;
 import com.flmhospitals.builder.AppointmentDTOBuilder;
 import com.flmhospitals.clients.DoctorClient;
+import com.flmhospitals.clients.PatientClient;
 import com.flmhospitals.dao.AppointmentRepository;
 import com.flmhospitals.dto.AppointmentRequestDTO;
 import com.flmhospitals.dto.AppointmentResponseDTO;
@@ -23,11 +24,16 @@ public class AppointmentServiceImpl implements AppointmentService {
 	public final AppointmentRepository appointementRepository;
 
 	public final DoctorClient doctorClient;
+	
+	public final PatientClient patientClient;
 
-	public AppointmentServiceImpl(AppointmentRepository appointementRepository, DoctorClient doctorClient) {
+	public AppointmentServiceImpl(AppointmentRepository appointementRepository, DoctorClient doctorClient,PatientClient patientClient) {
 
 		this.appointementRepository = appointementRepository;
+		
 		this.doctorClient = doctorClient;
+		
+		this.patientClient = patientClient;
 	}
 
 	@Override
@@ -56,7 +62,6 @@ public class AppointmentServiceImpl implements AppointmentService {
 				appointmentRequestDto.getPatientId(), appointmentRequestDto.getAppointmentDate(),
 				appointmentRequestDto.getStartTime(), appointmentRequestDto.getEndTime());
 		
-		System.out.println(patientAppointments);
 
 		Appointment appointment = AppointmentBuilder.buildAppointmentFromAppointmentRequestDTO(appointmentRequestDto);
 		
@@ -70,8 +75,18 @@ public class AppointmentServiceImpl implements AppointmentService {
 						
 						Appointment savedAppointment = appointementRepository.save(appointment);
 
+						String doctorName = doctorClient.getDoctorName(appointment.getDoctorId());
+						
+						String PatientName = patientClient.getPatientName(appointment.getPatientId());
+						
 						AppointmentResponseDTO appointmentResponseDTO = AppointmentDTOBuilder
 								.buildAppointmentResponseDTO(savedAppointment);
+						
+						appointmentResponseDTO.setDoctorName(doctorName);
+						
+						appointmentResponseDTO.setPatientName(PatientName);
+						
+						appointmentResponseDTO.setStatus("Booked");
 
 						log.info("AppointmentBooked Successfully {} ", appointmentRequestDto.getAppointmentDate());
 
@@ -86,7 +101,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 							"Alreay an appointment is booked for Doctor in the Date & Time Limits");
 
 			} else
-				throw new DoctorUnAvailableException("DoctorNotAvailable on this Date");
+				throw new DoctorUnAvailableException("Doctor NotAvailable on this Date");
 		} else {
 			log.info("Invalid Date hence throwing an Exception {}", appointmentRequestDto.getAppointmentDate());
 

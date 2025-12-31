@@ -17,4 +17,15 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<String> handleAppointmentAlreadyExistsException(AppointmentAlreadyExistsException ex) {
 		return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
 	}
+	
+	@ExceptionHandler(DoctorUnAvailableException.class)
+	public ResponseEntity<String> handleAppointmentAlreadyExistsException(DoctorUnAvailableException ex) {
+		return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+	}
+	
+	@ExceptionHandler(InvalidTimeException.class)
+	public ResponseEntity<String> handleInvalidTimeException(InvalidTimeException ex) {
+		return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+	}
+	
 }

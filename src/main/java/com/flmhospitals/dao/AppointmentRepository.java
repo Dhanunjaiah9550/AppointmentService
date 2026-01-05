@@ -20,4 +20,6 @@ public interface AppointmentRepository extends JpaRepository<Appointment, String
 	
 	@Query("SELECT a FROM Appointment a WHERE a.doctorId = :doctorId AND a.appointmentDate = :appointmentDate AND a.startTime >=:startTime AND a.endTime <=:endTime")
 	List<Appointment> findByDoctorId(@Param("doctorId") String doctorId,@Param("appointmentDate") LocalDate appointmentDate,@Param("startTime") LocalTime startTime, @Param("endTime") LocalTime endTime);
+	
+	List<Appointment> findByAppointmentDate(LocalDate date);
 }

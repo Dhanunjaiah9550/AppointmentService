@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.List;
 import com.flmhospitals.dto.AppointmentRequestDTO;
 import com.flmhospitals.dto.AppointmentResponseDTO;
+import com.flmhospitals.model.Appointment;
+
 
 public interface AppointmentService {
 
@@ -11,4 +13,5 @@ public interface AppointmentService {
 
 	AppointmentResponseDTO bookAppointment(AppointmentRequestDTO appointmentRequestDto);
 
+	List<Appointment> getAllAppointmentsForAllDoctors(LocalDate date);
 }

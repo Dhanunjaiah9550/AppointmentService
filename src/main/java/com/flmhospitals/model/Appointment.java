@@ -2,8 +2,10 @@ package com.flmhospitals.model;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import com.flmhospitals.Generator.AppointmentIdGenerator;
+import com.flmhospitals.Generator.AppointmentEntityListner;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -24,9 +26,9 @@ public class Appointment {
 	@Column(name = "appointment_id", nullable = false, unique = true)
 	private String appointmentId;
 
-	private Long patientId;
+	private String patientId;
 
-	private Long doctorId;
+	private String doctorId;
 
 	private LocalDate appointmentDate;
 
@@ -38,8 +40,8 @@ public class Appointment {
 
 	private String notes;
 
-	public Appointment(Long patientId, Long doctorId, LocalDate appointmentDate, LocalTime startTime, LocalTime endTime,
-			String status, String notes, AppointmentIdGenerator appointmentIdGenerator) {
+	public Appointment(String patientId, String doctorId, LocalDate appointmentDate, LocalTime startTime, LocalTime endTime,
+			String status, String notes) {
 		super();
 		this.patientId = patientId;
 		this.doctorId = doctorId;
@@ -48,6 +50,5 @@ public class Appointment {
 		this.endTime = endTime;
 		this.status = status;
 		this.notes = notes;
-		this.appointmentIdGenerator = appointmentIdGenerator;
 	}
 }

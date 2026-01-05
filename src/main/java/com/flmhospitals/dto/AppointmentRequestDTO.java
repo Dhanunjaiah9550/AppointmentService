@@ -13,9 +13,9 @@ import lombok.NoArgsConstructor;
 @Builder
 public class AppointmentRequestDTO {
 	
-	private Long patientId;
+	private String patientId;
 	
-	private Long doctorId;
+	private String doctorId;
 	
 	private LocalDate appointmentDate;
 	

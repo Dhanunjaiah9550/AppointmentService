@@ -1,10 +1,11 @@
 package com.flmhospitals.Generator;
 
 import com.flmhospitals.dao.AppointmentRepository;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import org.springframework.stereotype.Component;
 
+@Component
 public class AppointmentIdGenerator {
 	private final AppointmentRepository appointmentRepository;
 

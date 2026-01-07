@@ -14,4 +14,6 @@ public interface AppointmentService {
 	AppointmentResponseDTO bookAppointment(AppointmentRequestDTO appointmentRequestDto);
 
 	List<Appointment> getAllAppointmentsForAllDoctors(LocalDate date);
+	
+	List<Appointment> getAllAppointmentsOfDoctor(String doctorId,LocalDate date);
 }

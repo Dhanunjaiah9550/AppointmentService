@@ -11,6 +11,7 @@ import com.flmhospitals.dao.AppointmentRepository;
 import com.flmhospitals.dto.AppointmentRequestDTO;
 import com.flmhospitals.dto.AppointmentResponseDTO;
 import com.flmhospitals.exception.AppointmentAlreadyExistsException;
+import com.flmhospitals.exception.AppointmentNotFoundException;
 import com.flmhospitals.exception.DoctorUnAvailableException;
 import com.flmhospitals.exception.InvalidTimeException;
 import com.flmhospitals.model.Appointment;
@@ -21,15 +22,15 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AppointmentServiceImpl implements AppointmentService {
 
-	public final AppointmentRepository appointementRepository;
+	public final AppointmentRepository appointmentRepository;
 
 	public final DoctorClient doctorClient;
 	
 	public final PatientClient patientClient;
 
-	public AppointmentServiceImpl(AppointmentRepository appointementRepository, DoctorClient doctorClient,PatientClient patientClient) {
+	public AppointmentServiceImpl(AppointmentRepository appointmentRepository, DoctorClient doctorClient,PatientClient patientClient) {
 
-		this.appointementRepository = appointementRepository;
+		this.appointmentRepository = appointmentRepository;
 		
 		this.doctorClient = doctorClient;
 		
@@ -39,7 +40,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 	@Override
 	public List<String> getPatientsByDoctor(String staffId, LocalDate startDate, LocalDate endDate) {
 
-		List<String> patientsByStaffId = appointementRepository.findPatientsByStaffId(staffId, startDate, endDate);
+		List<String> patientsByStaffId = appointmentRepository.findPatientsByStaffId(staffId, startDate, endDate);
 
 		return patientsByStaffId;
 	}
@@ -54,11 +55,11 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 		Boolean doctorAvailablity = doctorClient.isDoctorAvailable(appointmentRequestDto.getDoctorId(), date);
 
-		List<Appointment> doctorAppointments = appointementRepository.findByDoctorId(
+		List<Appointment> doctorAppointments = appointmentRepository.findByDoctorId(
 				appointmentRequestDto.getDoctorId(), appointmentRequestDto.getAppointmentDate(),
 				appointmentRequestDto.getStartTime(), appointmentRequestDto.getEndTime());
 
-		List<Appointment> patientAppointments = appointementRepository.findByPatientId(
+		List<Appointment> patientAppointments = appointmentRepository.findByPatientId(
 				appointmentRequestDto.getPatientId(), appointmentRequestDto.getAppointmentDate(),
 				appointmentRequestDto.getStartTime(), appointmentRequestDto.getEndTime());
 		
@@ -73,7 +74,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 					
 					if (patientAppointments.isEmpty()) {
 						
-						Appointment savedAppointment = appointementRepository.save(appointment);
+						Appointment savedAppointment = appointmentRepository.save(appointment);
 
 						String doctorName = doctorClient.getDoctorName(appointment.getDoctorId());
 						
@@ -107,6 +108,15 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 			throw new InvalidTimeException("In valid Date and time, please enter the correct Date and time");
 		}
+	}
+
+	@Override
+	public List<Appointment> getAllAppointmentsForAllDoctors(LocalDate date) {
+		List<Appointment> appointments = appointmentRepository.findByAppointmentDate(date);
+		if(appointments.isEmpty()) {
+			throw new AppointmentNotFoundException("No appointments found for date :"+date);
+		}
+		return appointments;
 	}
 
 }

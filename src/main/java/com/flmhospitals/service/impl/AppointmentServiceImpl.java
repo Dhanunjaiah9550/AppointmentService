@@ -119,4 +119,13 @@ public class AppointmentServiceImpl implements AppointmentService {
 		return appointments;
 	}
 
+	@Override
+	public List<Appointment> getAllAppointmentsOfDoctor(String doctorId, LocalDate date) {
+		List<Appointment> appointments = appointmentRepository.findByDoctorIdAndAppointmentDate(doctorId, date);
+		if(appointments.isEmpty()) {
+			throw new AppointmentNotFoundException("No appointments found for doctorId " + doctorId + " on " + date);
+		}
+		return appointments;
+	}
+
 }

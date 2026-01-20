@@ -52,5 +52,10 @@ public class AppointmentController {
 		return ResponseEntity.ok(appointmentSerivce.getAllAppointmentsForAllDoctors(date));
 	}
 	
+	@GetMapping("/{doctorid}/{date}")
+	public ResponseEntity<List<Appointment>> getAllAppointmentsOfDoctor(@PathVariable("doctorid") String doctorId,@PathVariable("date") @DateTimeFormat(iso=DateTimeFormat.ISO.DATE) LocalDate date){
+		return ResponseEntity.ok(appointmentSerivce.getAllAppointmentsOfDoctor(doctorId, date));
+	}
+	
 	
 }

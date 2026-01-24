@@ -51,4 +51,5 @@ public class Appointment {
 		this.status = status;
 		this.notes = notes;
 	}
+
 }

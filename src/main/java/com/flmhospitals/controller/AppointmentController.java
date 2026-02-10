@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.flmhospitals.dto.AppointmentRequestDTO;
 import com.flmhospitals.dto.AppointmentResponseDTO;
+import com.flmhospitals.dto.RescheduleAppointmentDTO;
 import com.flmhospitals.model.Appointment;
 import com.flmhospitals.service.AppointmentService;
 
@@ -56,6 +57,18 @@ public class AppointmentController {
 	public ResponseEntity<List<Appointment>> getAllAppointmentsOfDoctor(@PathVariable("doctorid") String doctorId,@PathVariable("date") @DateTimeFormat(iso=DateTimeFormat.ISO.DATE) LocalDate date){
 		return ResponseEntity.ok(appointmentSerivce.getAllAppointmentsOfDoctor(doctorId, date));
 	}
+
+	@GetMapping("/allFutureAppointments/{doctorid}/")
+	public ResponseEntity<List<Appointment>> getAllFutureAppointmentsOfDoctor(@PathVariable("doctorid") String doctorId){
+		return ResponseEntity.ok(appointmentSerivce.getAllFutureAppointmentsOfDoctor(doctorId));
+	}
 	
+	@PostMapping("/reScheduleAppointment{appointmentId}/")
+	public ResponseEntity<AppointmentResponseDTO> reScheduleAppointment(@PathVariable(name="appointmentId") String appointmentId, @RequestBody RescheduleAppointmentDTO rescheduleAppointmentDTO){
+		
+		AppointmentResponseDTO ResponseDto = appointmentSerivce.reScheduleAppointment(appointmentId,rescheduleAppointmentDTO);
+		
+		return ResponseEntity.status(HttpStatus.CREATED).body(ResponseDto);
+	}	
 	
 }

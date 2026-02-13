@@ -139,6 +139,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 		return true;
 	}
 	
+	@Override
 	public AppointmentResponseDTO getAppointmentDetails(String appointmentId) {
 		
 		Appointment appointment = appointmentRepository.findById(appointmentId)

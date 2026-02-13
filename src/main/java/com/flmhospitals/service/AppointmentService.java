@@ -16,4 +16,6 @@ public interface AppointmentService {
 	List<Appointment> getAllAppointmentsForAllDoctors(LocalDate date);
 	
 	List<Appointment> getAllAppointmentsOfDoctor(String doctorId,LocalDate date);
+	
+	boolean cancelAppointment(String appointmentId);
 }

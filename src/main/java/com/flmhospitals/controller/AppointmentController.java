@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.flmhospitals.dto.AppointmentRequestDTO;
 import com.flmhospitals.dto.AppointmentResponseDTO;
 import com.flmhospitals.model.Appointment;
@@ -64,5 +65,14 @@ public class AppointmentController {
 	    return ResponseEntity.ok("Appointment cancelled successfully");
 	}
 	
+	
+	@GetMapping("/getAppointmentDetails/{appointmentId}")
+	public ResponseEntity<AppointmentResponseDTO> getAppointmentDetails(@PathVariable(name = "appointmentId") String appointmentId) {
+		
+		AppointmentResponseDTO appointmentResponse = appointmentService.getAppointmentDetails(appointmentId);
+		
+		return ResponseEntity.status(HttpStatus.OK).body(appointmentResponse);
+		 
+	}
 	
 }

@@ -1,11 +1,8 @@
 package com.flmhospitals.service.impl;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.chrono.ChronoLocalDate;
-import java.util.ArrayList;
+
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import com.flmhospitals.builder.AppointmentBuilder;
@@ -136,10 +133,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 	
 	@Override
 	public List<Appointment> getAllFutureAppointmentsOfDoctor(String doctorId) {
-		//LocalDateTime currentDateAndTime = LocalDateTime.now();
-		System.out.println("InSide getAllFutureAppointmentsOfDoctor method");
-		System.out.println("currentDateAndTime = "+LocalDate.now());
-//		List<Appointment> appointments = appointmentRepository.findByDoctorIdAndAppointmentDate(doctorId, date);
+		log.info("InSide getAllFutureAppointmentsOfDoctor method currentDateAndTime", LocalDate.now());
 		List<Appointment> appointments = appointmentRepository.findByDoctorId(doctorId)
 											.stream()
 											.filter(appointment  -> appointment.getAppointmentDate().isAfter(LocalDate.now()))
@@ -148,12 +142,6 @@ public class AppointmentServiceImpl implements AppointmentService {
 		if(appointments.isEmpty()) {
 			throw new AppointmentNotFoundException("No appointments found for doctorId " + doctorId + " after " + LocalDate.now());
 		}
-//		else {
-//			List<Appointment> futureAppointments = new ArrayList<>();
-//			appointments.stream()
-//						.filter(appointment  -> appointment.getAppointmentDate().isAfter(LocalDate.now()))
-//						.toList();
-//		}
 		return appointments;
 	}
 	
@@ -176,7 +164,6 @@ public class AppointmentServiceImpl implements AppointmentService {
 				appointment.getPatientId(), rescheduleAppointmentDTO.getNewDate(),
 				rescheduleAppointmentDTO.getNewStartTime(), rescheduleAppointmentDTO.getNewEndTime());	
 
-//		Appointment appointment = AppointmentBuilder.buildAppointmentFromAppointmentRequestDTO(appointmentRequestDto);
 		appointment.setAppointmentDate(rescheduleAppointmentDTO.getNewDate());
 		appointment.setStartTime(rescheduleAppointmentDTO.getNewStartTime());
 		appointment.setEndTime(rescheduleAppointmentDTO.getNewEndTime());
@@ -223,8 +210,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 			throw new InvalidTimeException("In valid Date and time, please enter the correct Date and time");
 		}
-		
-//		return null;
+
 		
 	}	
 

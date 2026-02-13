@@ -128,4 +128,12 @@ public class AppointmentServiceImpl implements AppointmentService {
 		return appointments;
 	}
 
+	@Override
+	public boolean cancelAppointment(String appointmentId) {
+		Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow(() -> new AppointmentNotFoundException("Appointment not found with id "+appointmentId));
+		appointment.setStatus("CANCELLED");
+		appointmentRepository.save(appointment);
+		return true;
+	}
+
 }

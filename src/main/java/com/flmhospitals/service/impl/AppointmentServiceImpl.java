@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+
 import com.flmhospitals.builder.AppointmentBuilder;
 import com.flmhospitals.builder.AppointmentDTOBuilder;
 import com.flmhospitals.clients.DoctorClient;
@@ -19,6 +20,7 @@ import com.flmhospitals.exception.DoctorUnAvailableException;
 import com.flmhospitals.exception.InvalidTimeException;
 import com.flmhospitals.model.Appointment;
 import com.flmhospitals.service.AppointmentService;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -213,5 +215,33 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 		
 	}	
+
+	@Override
+	public boolean cancelAppointment(String appointmentId) {
+		Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow(() -> new AppointmentNotFoundException("Appointment not found with id "+appointmentId));
+		appointment.setStatus("CANCELLED");
+		appointmentRepository.save(appointment);
+		return true;
+	}
+	
+	@Override
+	public AppointmentResponseDTO getAppointmentDetails(String appointmentId) {
+		
+		Appointment appointment = appointmentRepository.findById(appointmentId)
+		.orElseThrow(()->new AppointmentNotFoundException("no appointment found with the the Id :" + appointmentId));
+		
+		AppointmentResponseDTO appointmentResponseDTO = AppointmentDTOBuilder.buildAppointmentResponseDTO(appointment);
+		
+		String doctorName = doctorClient.getDoctorName(appointment.getDoctorId());
+		
+		String PatientName = patientClient.getPatientName(appointment.getPatientId());
+		
+		appointmentResponseDTO.setDoctorName(doctorName);
+		
+		appointmentResponseDTO.setPatientName(PatientName);
+		
+		 return appointmentResponseDTO;
+
+	}
 
 }

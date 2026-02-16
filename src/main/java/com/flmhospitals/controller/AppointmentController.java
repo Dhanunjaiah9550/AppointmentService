@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.flmhospitals.dto.AppointmentRequestDTO;
 import com.flmhospitals.dto.AppointmentResponseDTO;
 import com.flmhospitals.dto.RescheduleAppointmentDTO;
@@ -24,11 +26,11 @@ import com.flmhospitals.service.AppointmentService;
 @RequestMapping("/appointments")
 public class AppointmentController {
 	
-	public final AppointmentService appointmentSerivce;
+	public final AppointmentService appointmentService;
 	
 	public AppointmentController(AppointmentService appointmentService) {
 		
-		this.appointmentSerivce = appointmentService;
+		this.appointmentService = appointmentService;
 	}
 
 	@GetMapping("/getDoctorPatients/{staffId}")
@@ -38,25 +40,31 @@ public class AppointmentController {
 		
 		LocalDate endDate = LocalDate.parse(enddate);
 		
-		return appointmentSerivce.getPatientsByDoctor(staffId,startDate,endDate);
+		return appointmentService.getPatientsByDoctor(staffId,startDate,endDate);
 	}
 	
 	@PostMapping("/bookAppointment")
 	public ResponseEntity<AppointmentResponseDTO> bookAppointment(@RequestBody AppointmentRequestDTO appointmentRequestDto){
 		
-		AppointmentResponseDTO ResponseDto = appointmentSerivce.bookAppointment(appointmentRequestDto);
+		AppointmentResponseDTO ResponseDto = appointmentService.bookAppointment(appointmentRequestDto);
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(ResponseDto);
 	}
 	
 	@GetMapping("/{date}")
 	public ResponseEntity<List<Appointment>> getAllAppointmentsForAllDoctors(@PathVariable("date") @DateTimeFormat(iso=DateTimeFormat.ISO.DATE)  LocalDate date){
-		return ResponseEntity.ok(appointmentSerivce.getAllAppointmentsForAllDoctors(date));
+		return ResponseEntity.ok(appointmentService.getAllAppointmentsForAllDoctors(date));
 	}
 	
 	@GetMapping("/{doctorid}/{date}")
 	public ResponseEntity<List<Appointment>> getAllAppointmentsOfDoctor(@PathVariable("doctorid") String doctorId,@PathVariable("date") @DateTimeFormat(iso=DateTimeFormat.ISO.DATE) LocalDate date){
-		return ResponseEntity.ok(appointmentSerivce.getAllAppointmentsOfDoctor(doctorId, date));
+		return ResponseEntity.ok(appointmentService.getAllAppointmentsOfDoctor(doctorId, date));
+	}
+	
+	@DeleteMapping("/{appointmentId}")
+	public ResponseEntity<String> cancelAppointment(@PathVariable("appointmentId") String appointmentId) {
+	    appointmentService.cancelAppointment(appointmentId);
+	    return ResponseEntity.ok("Appointment cancelled successfully");
 	}
 
 	@GetMapping("/allFutureAppointments/{doctorid}/")
@@ -71,5 +79,14 @@ public class AppointmentController {
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(ResponseDto);
 	}	
+	
+	@GetMapping("/getAppointmentDetails/{appointmentId}")
+	public ResponseEntity<AppointmentResponseDTO> getAppointmentDetails(@PathVariable(name = "appointmentId") String appointmentId) {
+		
+		AppointmentResponseDTO appointmentResponse = appointmentService.getAppointmentDetails(appointmentId);
+		
+		return ResponseEntity.status(HttpStatus.OK).body(appointmentResponse);
+		 
+	}
 	
 }

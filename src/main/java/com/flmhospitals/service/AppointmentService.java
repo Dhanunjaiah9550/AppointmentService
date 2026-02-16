@@ -7,7 +7,6 @@ import com.flmhospitals.dto.AppointmentResponseDTO;
 import com.flmhospitals.dto.RescheduleAppointmentDTO;
 import com.flmhospitals.model.Appointment;
 
-
 public interface AppointmentService {
 
 	List<String> getPatientsByDoctor(String staffId,LocalDate startDate, LocalDate endDate);
@@ -21,4 +20,8 @@ public interface AppointmentService {
 	List<Appointment> getAllFutureAppointmentsOfDoctor(String doctorId);
 
 	AppointmentResponseDTO reScheduleAppointment(String appointmentId,RescheduleAppointmentDTO rescheduleAppointmentDTO);
+
+	boolean cancelAppointment(String appointmentId);
+	
+	AppointmentResponseDTO getAppointmentDetails(String appointmentId);
 }

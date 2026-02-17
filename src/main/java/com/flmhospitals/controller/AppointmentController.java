@@ -23,7 +23,6 @@ import com.flmhospitals.dto.RescheduleAppointmentDTO;
 import com.flmhospitals.model.Appointment;
 import com.flmhospitals.service.AppointmentService;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/appointments")
 public class AppointmentController {
@@ -71,13 +70,13 @@ public class AppointmentController {
 
 	@GetMapping("/allFutureAppointments/{doctorid}/")
 	public ResponseEntity<List<Appointment>> getAllFutureAppointmentsOfDoctor(@PathVariable("doctorid") String doctorId){
-		return ResponseEntity.ok(appointmentSerivce.getAllFutureAppointmentsOfDoctor(doctorId));
+		return ResponseEntity.ok(appointmentService.getAllFutureAppointmentsOfDoctor(doctorId));
 	}
 	
 	@PutMapping("/reScheduleAppointment{appointmentId}/")
 	public ResponseEntity<AppointmentResponseDTO> reScheduleAppointment(@PathVariable(name="appointmentId") String appointmentId, @RequestBody RescheduleAppointmentDTO rescheduleAppointmentDTO){
 		
-		AppointmentResponseDTO ResponseDto = appointmentSerivce.reScheduleAppointment(appointmentId,rescheduleAppointmentDTO);
+		AppointmentResponseDTO ResponseDto = appointmentService.reScheduleAppointment(appointmentId,rescheduleAppointmentDTO);
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(ResponseDto);
 	}	

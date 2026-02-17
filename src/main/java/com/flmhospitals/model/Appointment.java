@@ -3,6 +3,7 @@ package com.flmhospitals.model;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import com.flmhospitals.Generator.AppointmentEntityListner;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -41,6 +42,7 @@ public class Appointment {
 	private String notes;
 
 	public Appointment(String patientId, String doctorId, LocalDate appointmentDate, LocalTime startTime, LocalTime endTime,
+
 			String status, String notes) {
 		super();
 		this.patientId = patientId;

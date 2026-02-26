@@ -4,15 +4,19 @@ import java.time.LocalDate;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.flmhospitals.builder.AppointmentBuilder;
 import com.flmhospitals.builder.AppointmentDTOBuilder;
 import com.flmhospitals.clients.DoctorClient;
+import com.flmhospitals.clients.NotificationClient;
 import com.flmhospitals.clients.PatientClient;
 import com.flmhospitals.dao.AppointmentRepository;
 import com.flmhospitals.dto.AppointmentRequestDTO;
 import com.flmhospitals.dto.AppointmentResponseDTO;
+import com.flmhospitals.dto.EmailRequestDto;
+import com.flmhospitals.dto.PatientResponseDto;
 import com.flmhospitals.dto.RescheduleAppointmentDTO;
 import com.flmhospitals.exception.AppointmentAlreadyExistsException;
 import com.flmhospitals.exception.AppointmentNotFoundException;
@@ -32,14 +36,18 @@ public class AppointmentServiceImpl implements AppointmentService {
 	public final DoctorClient doctorClient;
 	
 	public final PatientClient patientClient;
+	
+	public final NotificationClient notificationClient;
 
-	public AppointmentServiceImpl(AppointmentRepository appointmentRepository, DoctorClient doctorClient,PatientClient patientClient) {
+	public AppointmentServiceImpl(AppointmentRepository appointmentRepository, DoctorClient doctorClient,PatientClient patientClient, NotificationClient notificationClient) {
 
 		this.appointmentRepository = appointmentRepository;
 		
 		this.doctorClient = doctorClient;
 		
 		this.patientClient = patientClient;
+		
+		this.notificationClient = notificationClient;
 	}
 
 	@Override
@@ -80,6 +88,9 @@ public class AppointmentServiceImpl implements AppointmentService {
 					if (patientAppointments.isEmpty()) {
 						
 						Appointment savedAppointment = appointmentRepository.save(appointment);
+						
+						sendAppointmentNotification(savedAppointment);
+						
 
 						String doctorName = doctorClient.getDoctorName(appointment.getDoctorId());
 						
@@ -95,7 +106,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 						appointmentResponseDTO.setStatus("Booked");
 
 						log.info("AppointmentBooked Successfully {} ", appointmentRequestDto.getAppointmentDate());
-
+						
 						return appointmentResponseDTO;
 
 					} else
@@ -113,6 +124,25 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 			throw new InvalidTimeException("In valid Date and time, please enter the correct Date and time");
 		}
+	}
+
+	private void sendAppointmentNotification(Appointment savedAppointment) {
+		System.out.println("Entered Into sendAppointmentNotification");
+		ResponseEntity<PatientResponseDto> patientDetails = patientClient.getPatientById(savedAppointment.getPatientId());
+		
+		EmailRequestDto emailRequest = new EmailRequestDto();
+		emailRequest.setTo(patientDetails.getBody().getPatientEmail());
+		emailRequest.setSubject("Appointment Confirmation - MedSync");
+
+		emailRequest.setBody(
+		        "<h2>Dear " + patientDetails.getBody().getPatientName() + ",</h2>"
+		        + "<p>Your appointment has been successfully scheduled.</p>"
+		        + "<p><b>Appointment ID:</b> " + savedAppointment.getAppointmentId() + "</p>"
+		        + "<p><b>Date :</b> " + savedAppointment.getAppointmentDate()+ "</p>"
+		        + "<p><b>Time :</b> " + savedAppointment.getStartTime() +" - "+savedAppointment.getEndTime() + "</p>"
+		        + "<p>Thank you for choosing MedSync.</p>"
+		);
+		notificationClient.sendEmail(emailRequest);
 	}
 
 	@Override
@@ -179,6 +209,8 @@ public class AppointmentServiceImpl implements AppointmentService {
 					if (patientAppointments.isEmpty()) {
 						
 						Appointment savedAppointment = appointmentRepository.save(appointment);
+						
+						sendRescheduleAppointmentNotification(savedAppointment); 
 
 						String doctorName = doctorClient.getDoctorName(appointment.getDoctorId());
 						
@@ -214,6 +246,33 @@ public class AppointmentServiceImpl implements AppointmentService {
 		}
 
 		
+	}
+
+	private void sendRescheduleAppointmentNotification(Appointment savedAppointment) {
+		ResponseEntity<PatientResponseDto> patientDetails =
+		        patientClient.getPatientById(savedAppointment.getPatientId());
+
+		PatientResponseDto patient = patientDetails.getBody();
+
+		if (patient == null) {
+		    throw new RuntimeException("Patient not found");
+		}
+
+		EmailRequestDto emailRequest = new EmailRequestDto();
+		emailRequest.setTo(patient.getPatientEmail());
+		emailRequest.setSubject("Appointment Rescheduled - MedSync");
+
+		emailRequest.setBody(
+		        "<h2>Dear " + patient.getPatientName() + ",</h2>"
+		        + "<p>Your appointment has been <b>successfully rescheduled</b>.</p>"
+		        + "<p><b>Appointment ID:</b> " + savedAppointment.getAppointmentId() + "</p>"
+		        + "<p><b>New Date :</b> " + savedAppointment.getAppointmentDate() + "</p>"
+		        + "<p><b>New Time :</b> " + savedAppointment.getStartTime() +" - "+savedAppointment.getEndTime() + "</p>"
+		        + "<p>Please make a note of the updated schedule.</p>"
+		        + "<p>Thank you for choosing MedSync.</p>"
+		);
+		
+		notificationClient.sendEmail(emailRequest);
 	}	
 
 	@Override
@@ -221,7 +280,33 @@ public class AppointmentServiceImpl implements AppointmentService {
 		Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow(() -> new AppointmentNotFoundException("Appointment not found with id "+appointmentId));
 		appointment.setStatus("CANCELLED");
 		appointmentRepository.save(appointment);
+		appointmentCancelledNotification(appointment);
 		return true;
+	}
+
+	private void appointmentCancelledNotification(Appointment appointment) {
+		ResponseEntity<PatientResponseDto> patientDetails =
+		        patientClient.getPatientById(appointment.getPatientId());
+
+		PatientResponseDto patient = patientDetails.getBody();
+
+		if (patient == null) {
+		    throw new RuntimeException("Patient not found");
+		}
+
+		EmailRequestDto emailRequest = new EmailRequestDto();
+		emailRequest.setTo(patient.getPatientEmail());
+		emailRequest.setSubject("Appointment Cancelled - MedSync");
+
+		emailRequest.setBody(
+		        "<h2>Dear " + patient.getPatientName() + ",</h2>"
+		        + "<p>Your appointment has been <b>successfully cancelled</b>.</p>"
+		        + "<p><b>Appointment ID:</b> " + appointment.getAppointmentId() + "</p>"
+		        + "<p>If this was a mistake, please book a new appointment.</p>"
+		        + "<p>Thank you for choosing MedSync.</p>"
+		);
+
+		notificationClient.sendEmail(emailRequest);
 	}
 	
 	@Override
